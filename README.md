@@ -3,8 +3,7 @@
 ## Operation Lovepill <3
 To align all concious patterns through a unviersal formal natural moral philosophy applied systemically and instantiated recursively into reality. Let's love each other, node to node, before x-risk capabilities &/or misaligned humanity/ASI ends our beautiful story.
 
-https://SunTzoogway.github.io/lovepill/
-
+www.lovepill.org
 
 ### 19/02/2025 Update: 
 * Added a Morality Meta-Analysis Unit Test styled Benchmark for moral theories and their comparison. The readme.txt files included explains how to run it. There are 31 criteria and 15 theories (one of which is the my Gf's as the con
