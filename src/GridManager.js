@@ -364,6 +364,16 @@ class LineDrawing {
     
     fadeOutLine() {
         return new Promise((resolve) => {
+            // Redraw line with final snapped points before fading
+            const { points, line, width } = this
+            if (points.length > 0) {
+                line.clear()
+                line.moveTo(points[0].x, points[0].y)
+                for (let i = 1; i < points.length; i++) {
+                    line.lineTo(points[i].x, points[i].y)
+                }
+                line.stroke({ width, color: COLORS.red, pixelLine: false })
+            }
 
             const oldLine = this.line
             gsap.to(this.line, {
@@ -382,10 +392,6 @@ class LineDrawing {
     }
 
     update() {
-        if (this.points.length >= 5) {
-            return
-        }
-
         const { points, line, width } = this
         if (points.length > 0) {
             line.clear()
@@ -395,7 +401,7 @@ class LineDrawing {
                 line.lineTo(points[i].x, points[i].y)
             }
 
-            if (this.pointerPosition) {
+            if (this.pointerPosition && points.length < 5) {
                 line.lineTo(this.pointerPosition.x, this.pointerPosition.y)
             }
 
