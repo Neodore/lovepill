@@ -14,6 +14,7 @@ const BG_COLOR_HEX = '#FAF9F6';
 
 // Initialize audio context immediately
 sound.init();
+sound.context.autoPause = false;
 
 async function preloadSounds() {
     const audioFiles = {
