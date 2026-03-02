@@ -349,6 +349,7 @@ class LineDrawing {
     }
 
     markLineComplete() {
+        this.isComplete = true
         const { points, line, width } = this
 
         line.clear()
@@ -358,21 +359,23 @@ class LineDrawing {
             line.lineTo(points[i].x, points[i].y)
         }
 
-           
+
         line.stroke({ width, color: COLORS.pink, pixelLine: false })
     }
-    
+
     fadeOutLine() {
         return new Promise((resolve) => {
-            // Redraw line with final snapped points before fading
-            const { points, line, width } = this
-            if (points.length > 0) {
-                line.clear()
-                line.moveTo(points[0].x, points[0].y)
-                for (let i = 1; i < points.length; i++) {
-                    line.lineTo(points[i].x, points[i].y)
+            // Redraw line with final snapped points before fading (only on fail)
+            if (!this.isComplete) {
+                const { points, line, width } = this
+                if (points.length > 0) {
+                    line.clear()
+                    line.moveTo(points[0].x, points[0].y)
+                    for (let i = 1; i < points.length; i++) {
+                        line.lineTo(points[i].x, points[i].y)
+                    }
+                    line.stroke({ width, color: COLORS.red, pixelLine: false })
                 }
-                line.stroke({ width, color: COLORS.red, pixelLine: false })
             }
 
             const oldLine = this.line
