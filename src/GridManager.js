@@ -395,8 +395,6 @@ class LineDrawing {
     }
 
     update() {
-        if (this.isComplete) return
-
         const { points, line, width } = this
         if (points.length > 0) {
             line.clear()
@@ -410,7 +408,8 @@ class LineDrawing {
                 line.lineTo(this.pointerPosition.x, this.pointerPosition.y)
             }
 
-            line.stroke({ width, color: COLORS.red, pixelLine: false })
+            const color = this.isComplete ? COLORS.pink : COLORS.red
+            line.stroke({ width, color, pixelLine: false })
         }
     }
 
