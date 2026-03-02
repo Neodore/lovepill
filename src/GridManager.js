@@ -395,6 +395,8 @@ class LineDrawing {
     }
 
     update() {
+        if (this.isComplete) return
+
         const { points, line, width } = this
         if (points.length > 0) {
             line.clear()
