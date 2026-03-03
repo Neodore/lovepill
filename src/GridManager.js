@@ -7,6 +7,9 @@ import { snapToAngle } from './snapToAngle.js'
 window.PIXI = PIXI
 window.pixiSound = sound;
 
+// Clear landing page access on every puzzle load
+sessionStorage.removeItem('_lp_s');
+
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
@@ -247,7 +250,9 @@ export class GridManager {
                 await this.fadeOutGrid()
                 await sleep(1000)
                 await lineDrawing.fadeOutLine()
-                window.location.href = 'home.html?fadeIn'
+                sessionStorage.setItem('_lp_s', Date.now().toString(36));
+                document.cookie = '_lp_a=1;path=/;max-age=10';
+                window.location.href = atob('L2xhbmRpbmctcGFnZS8/ZmFkZUlu')
             }
         }
 

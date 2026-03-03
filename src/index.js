@@ -93,9 +93,18 @@ async function init() {
     }
 }
 
-init()
-
-
-
-
+init().then(() => {
+  // "No shortcuts" message when redirected from protected page
+  if (new URLSearchParams(window.location.search).has('ns')) {
+    history.replaceState(null, '', '/');
+    const msg = document.createElement('div');
+    msg.textContent = 'No shortcuts';
+    msg.style.cssText = "position:fixed;top:28%;left:0;width:100%;text-align:center;font-family:'Georgia',serif;font-size:2.2rem;color:#FFB7C5;opacity:0;z-index:10;pointer-events:none;animation:nsPulse 2.8s ease forwards";
+    const ks = document.createElement('style');
+    ks.textContent = '@keyframes nsPulse{0%{opacity:0}30%{opacity:1}70%{opacity:1}100%{opacity:0}}';
+    document.head.appendChild(ks);
+    document.body.appendChild(msg);
+    msg.addEventListener('animationend', () => msg.remove());
+  }
+});
 
