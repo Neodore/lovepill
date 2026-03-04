@@ -1,11 +1,39 @@
-// Protection gate — redirect to puzzle if no session token
+// ============================================================================
+// Landing Page Protection & Content (src/landing.js)
+// ============================================================================
+// This file is loaded by landing-page/index.html and home.html.
+// ALL page content is rendered via JS — the HTML shells are empty so viewing
+// source reveals nothing. This is one of 3 protection layers:
+//
+// Layer 1: sessionStorage token ('_lp_s') — set by GridManager on puzzle win.
+//          If missing, we redirect to the puzzle page with /?ns which triggers
+//          the "No shortcuts" fade-in message over the dots.
+//
+// Layer 2: JS-rendered content — no content in HTML source to discover.
+//
+// Layer 3: Obfuscated redirect URL — the URL in GridManager is base64-encoded
+//          so searching the JS bundle for "landing-page" finds nothing.
+//
+// What this stops: casual URL-typing, viewing HTML source, text-searching bundle.
+// What it doesn't stop: reading minified JS + manually setting sessionStorage
+// (acceptable tradeoff for a static site).
+// ============================================================================
+
+// Protection gate — redirect unauthorized users to puzzle with "No shortcuts" message.
+// The HTML shells (landing-page/index.html, home.html) also have a synchronous
+// <script> in <head> that does the same redirect, which fires before this module
+// loads. This is a fallback in case that script is bypassed.
 if (!sessionStorage.getItem('_lp_s')) {
   location.replace('/?ns');
 }
 
-if (!sessionStorage.getItem('_lp_s')) { /* halt — all content below is gated */ } else {
+// All content below is wrapped in this gate so nothing renders without the token.
+// We use if/else instead of throw because Vite's dev error overlay can catch throws.
+if (!sessionStorage.getItem('_lp_s')) { /* halt */ } else {
 
 // --- Fade-in overlay ---
+// White overlay that fades out over 2s when arriving from puzzle win (?fadeIn param).
+// Creates a smooth white-to-content transition matching the puzzle's fade-out.
 const params = new URLSearchParams(window.location.search);
 if (params.has('fadeIn')) {
   const overlay = document.createElement('div');

@@ -7,7 +7,9 @@ import { snapToAngle } from './snapToAngle.js'
 window.PIXI = PIXI
 window.pixiSound = sound;
 
-// Clear landing page access on every puzzle load
+// Landing page protection: clear the access token every time the puzzle loads.
+// This ensures the landing page is only reachable by solving the puzzle —
+// refreshing the puzzle page or navigating back here revokes access.
 sessionStorage.removeItem('_lp_s');
 
 gsap.registerPlugin(PixiPlugin);
@@ -250,6 +252,11 @@ export class GridManager {
                 await this.fadeOutGrid()
                 await sleep(1000)
                 await lineDrawing.fadeOutLine()
+                // Grant landing page access (3 layers of protection):
+                // 1. sessionStorage token — landing.js checks this; if missing, redirects to puzzle
+                // 2. Short-lived cookie (10s) — Vite dev middleware checks this to allow the
+                //    request through instead of 302-ing to /?ns
+                // 3. Obfuscated URL — base64-encoded so "landing-page" isn't searchable in bundle
                 sessionStorage.setItem('_lp_s', Date.now().toString(36));
                 document.cookie = '_lp_a=1;path=/;max-age=10';
                 window.location.href = atob('L2xhbmRpbmctcGFnZS8/ZmFkZUlu')
