@@ -6,27 +6,22 @@ export default defineConfig({
   base: './',
 
   // ---- Landing Page Protection (dev server only) ----
-  // In dev, this middleware intercepts direct URL access to /landing-page and /home
-  // and returns a 302 to /?ns BEFORE the browser renders anything. This makes the
-  // transition seamless — the puzzle page's matching background (#FAF9F6) is already
-  // set via <style> in index.html <head>, so there's no white/grey flash.
+  // Intercepts direct URL access to /landing-page and /home.
+  // Authorized requests (short-lived cookie '_lp_a=1' from puzzle win) pass through.
+  // Unauthorized requests are let through to the HTML shells, which contain an inline
+  // transition page: matching #FAF9F6 background + "No shortcuts" fade animation +
+  // redirect to / only after the animation completes. This avoids any white/grey flash
+  // because the redirect happens when the screen is already "empty".
   //
-  // The only exception: requests with the short-lived cookie '_lp_a=1' (set by
-  // GridManager.js on puzzle win, expires in 10s). These are legitimate wins.
-  //
-  // In production (GitHub Pages), there's no server middleware, so the HTML shells
-  // (landing-page/index.html, home.html) have a synchronous <script> in <head>
-  // that does the same redirect client-side, with matching background colors on
-  // both pages to minimize any flash.
+  // The middleware also handles /landing-page (no trailing slash) by rewriting to
+  // /landing-page/ so Vite serves the correct index.html.
   plugins: [{
     name: 'protect-landing',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const url = req.url.split('?')[0].replace(/\/$/, '') || '/';
-        if (url === '/landing-page' || url === '/home' || url === '/home.html') {
-          if (req.headers.cookie && req.headers.cookie.includes('_lp_a=1')) return next();
-          res.writeHead(302, { Location: '/?ns' });
-          return res.end();
+        // Rewrite /landing-page (no slash) to /landing-page/ so Vite finds index.html
+        if (req.url === '/landing-page' || req.url.startsWith('/landing-page?')) {
+          req.url = req.url.replace('/landing-page', '/landing-page/');
         }
         next();
       });

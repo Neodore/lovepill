@@ -19,12 +19,13 @@
 // (acceptable tradeoff for a static site).
 // ============================================================================
 
-// Protection gate — redirect unauthorized users to puzzle with "No shortcuts" message.
-// The HTML shells (landing-page/index.html, home.html) also have a synchronous
-// <script> in <head> that does the same redirect, which fires before this module
-// loads. This is a fallback in case that script is bypassed.
-if (!sessionStorage.getItem('_lp_s')) {
-  location.replace('/?ns');
+// Protection gate — if unauthorized, the HTML shells handle the "No shortcuts"
+// animation and set window.__lp_blocked=true to prevent this module from
+// also redirecting (which would race the animation and cause a flash).
+// If somehow this module runs without the HTML gate (e.g. direct import),
+// we redirect as a fallback.
+if (!sessionStorage.getItem('_lp_s') && !window.__lp_blocked) {
+  location.replace('/');
 }
 
 // All content below is wrapped in this gate so nothing renders without the token.

@@ -4,19 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#FAF9F6">
-    <!-- Background must match puzzle page (#FAF9F6) for seamless transition.
-         Set here in <head> so it's painted before anything else renders. -->
-    <style>html,body{margin:0;background:#FAF9F6}</style>
-    <!-- Synchronous redirect (runs before body paints). In dev, Vite middleware
-         handles this via 302 so this script is a production fallback for GitHub Pages
-         where no server middleware exists. -->
-    <script>if(!sessionStorage.getItem('_lp_s'))location.replace('/?ns')</script>
+    <style>html,body{margin:0;height:100%;background:#FAF9F6}</style>
+    <!--
+      Gate script: for unauthorized users, renders a transition page that matches
+      the puzzle page (same background, same 3x3 dot grid) with "No shortcuts"
+      text above the dots. After the text fades out, redirects to /.
+      Sets window.__lp_blocked to prevent landing.js from firing its own redirect.
+    -->
+    <script>
+    if(!sessionStorage.getItem('_lp_s')){
+      window.__lp_blocked=true;
+      document.addEventListener('DOMContentLoaded',function(){
+        var b=document.body;
+        b.innerHTML='';
+        b.style.cssText='margin:0;height:100vh;background:#FAF9F6;overflow:hidden';
+        // Keyframes for text fade
+        var k=document.createElement('style');
+        k.textContent='@keyframes ns{0%{opacity:0}30%{opacity:1}70%{opacity:1}100%{opacity:0}}';
+        document.head.appendChild(k);
+        // "No shortcuts" text — positioned above center to sit above the dots
+        var m=document.createElement('div');
+        m.textContent='No shortcuts';
+        m.style.cssText="position:absolute;left:0;width:100%;text-align:center;top:calc(50% - 200px);font-family:Georgia,serif;font-size:2.2rem;color:#FFB7C5;opacity:0;animation:ns 2.8s ease forwards";
+        b.appendChild(m);
+        // 3x3 dot grid matching puzzle layout (100px spacing, 6px radius, #990012)
+        var g=document.createElement('div');
+        g.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;grid-template-columns:repeat(3,1fr);gap:88px';
+        for(var i=0;i<9;i++){
+          var d=document.createElement('div');
+          d.style.cssText='width:12px;height:12px;border-radius:50%;background:#990012';
+          g.appendChild(d);
+        }
+        b.appendChild(g);
+        m.addEventListener('animationend',function(){location.replace('/')});
+      });
+    }
+    </script>
     <title>Love Pill</title>
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <link rel="icon" type="image/png" href="../favicon.png">
 </head>
-<!-- Empty shell — all content is rendered by landing.js (protection layer 2).
-     Viewing page source reveals nothing about the landing page content. -->
 <body>
     <script type="module" src="../src/landing.js"></script>
 </body>
