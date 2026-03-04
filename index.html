@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Inline background color ensures #FAF9F6 is painted immediately, before
+         style.css loads. This prevents white/grey flash when redirected here
+         from /landing-page or /home via the "no shortcuts" protection flow. -->
+    <style>html,body{background:#FAF9F6}</style>
     <link rel="stylesheet" type="text/css" href="./style.css">
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
     <link rel="icon" type="image/png" href="./favicon.png">

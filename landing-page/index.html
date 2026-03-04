@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Background must match puzzle page (#FAF9F6) for seamless transition.
+         Set here in <head> so it's painted before anything else renders. -->
+    <style>html,body{margin:0;background:#FAF9F6}</style>
+    <!-- Synchronous redirect (runs before body paints). In dev, Vite middleware
+         handles this via 302 so this script is a production fallback for GitHub Pages
+         where no server middleware exists. -->
+    <script>if(!sessionStorage.getItem('_lp_s'))location.replace('/?ns')</script>
     <title>Love Pill</title>
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <link rel="icon" type="image/png" href="../favicon.png">
 </head>
-<body style="margin:0;background:#FAF9F6">
-    <script>if(!sessionStorage.getItem('_lp_s'))location.replace('/?ns')</script>
+<!-- Empty shell — all content is rendered by landing.js (protection layer 2).
+     Viewing page source reveals nothing about the landing page content. -->
+<body>
     <script type="module" src="../src/landing.js"></script>
 </body>
 </html>
