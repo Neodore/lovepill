@@ -29,7 +29,7 @@ jobs:
         run: pnpm run build
 
       - name: Create CNAME file
-        run: echo 'lovepill.org' > ./dist/CNAME
+        run: echo 'operation.lovepill.org' > ./dist/CNAME
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4

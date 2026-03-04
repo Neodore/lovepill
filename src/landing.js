@@ -33,10 +33,10 @@ if (!sessionStorage.getItem('_lp_s') && !window.__lp_blocked) {
 if (!sessionStorage.getItem('_lp_s')) { /* halt */ } else {
 
 // --- Fade-in overlay ---
-// White overlay that fades out over 2s when arriving from puzzle win (?fadeIn param).
-// Creates a smooth white-to-content transition matching the puzzle's fade-out.
-const params = new URLSearchParams(window.location.search);
-if (params.has('fadeIn')) {
+// White overlay that fades out over 2s when arriving from puzzle win.
+// Uses a one-time sessionStorage flag ('_lp_fade') to keep the URL clean.
+if (sessionStorage.getItem('_lp_fade')) {
+  sessionStorage.removeItem('_lp_fade');
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:1000;animation:lpFadeOut 2s ease-in-out forwards';
   document.body.appendChild(overlay);

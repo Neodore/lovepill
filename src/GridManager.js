@@ -256,10 +256,11 @@ export class GridManager {
                 // 1. sessionStorage token — landing.js checks this; if missing, redirects to puzzle
                 // 2. Short-lived cookie (10s) — Vite dev middleware checks this to allow the
                 //    request through instead of 302-ing to /?ns
-                // 3. Obfuscated URL — base64-encoded so "landing-page" isn't searchable in bundle
+                // 3. Obfuscated URL — base64-encoded so "/home" isn't searchable in bundle
                 sessionStorage.setItem('_lp_s', Date.now().toString(36));
+                sessionStorage.setItem('_lp_fade', '1');
                 document.cookie = '_lp_a=1;path=/;max-age=10';
-                window.location.href = atob('L2xhbmRpbmctcGFnZS8/ZmFkZUlu')
+                window.location.href = atob('L2hvbWU=')
             }
         }
 
