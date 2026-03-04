@@ -21,10 +21,10 @@
         m.style.cssText="position:absolute;left:0;width:100%;text-align:center;top:calc(50% - 200px);font-family:Georgia,serif;font-size:2.2rem;color:#FFB7C5;opacity:0;animation:ns 2.8s ease forwards";
         b.appendChild(m);
         var g=document.createElement('div');
-        g.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;grid-template-columns:repeat(3,1fr);gap:88px';
-        for(var i=0;i<9;i++){
+        g.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-100px,-100px)';
+        for(var r=0;r<3;r++)for(var c=0;c<3;c++){
           var d=document.createElement('div');
-          d.style.cssText='width:12px;height:12px;border-radius:50%;background:#990012';
+          d.style.cssText='position:absolute;width:12px;height:12px;border-radius:50%;background:#990012;left:'+(c*100-6)+'px;top:'+(r*100-6)+'px';
           g.appendChild(d);
         }
         b.appendChild(g);
