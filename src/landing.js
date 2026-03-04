@@ -60,7 +60,7 @@ style.textContent = `
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #fcfaf6;
+  background: #FAF9F6;
   color: #4A3E3B;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -117,7 +117,7 @@ body {
   padding: 0.9rem 2rem;
   position: sticky;
   top: 0;
-  background: #fcfaf6;
+  background: #FAF9F6;
   z-index: 100;
   border-bottom: 1px solid #e8e2da;
 }
