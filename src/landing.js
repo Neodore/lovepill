@@ -59,6 +59,14 @@ style.textContent = `
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html, body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: #FAF9F6;

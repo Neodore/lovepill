@@ -6,6 +6,12 @@ canvas {
 html, body {
   height: 100%;
   padding:0px; margin:0px;
+  overflow: hidden;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
 }
 
 #container {
