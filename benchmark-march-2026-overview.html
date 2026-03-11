@@ -255,6 +255,53 @@
   .file-panel .file-meta .gh-link svg { width: 14px; height: 14px; fill: currentColor; }
   .file-desc { font-size: 0.85rem; color: var(--text-muted); }
 
+  /* Accordion */
+  .accordion { margin: 1rem 0; }
+  .accordion-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+  .accordion-header {
+    width: 100%;
+    background: var(--surface);
+    border: none;
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: #1c2129; }
+  .accordion-header::after {
+    content: '+';
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+  .accordion-item.open .accordion-header::after { content: '−'; }
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+  .accordion-item.open .accordion-body { max-height: 500px; }
+  .accordion-content {
+    padding: 0 1rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
   .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; }
 </style>
 </head>
@@ -287,6 +334,7 @@
 <nav class="index-nav">
   <a href="#methodology">Methodology</a>
   <a href="#key-insights">Key Insights</a>
+  <a href="#limitations">Limitations</a>
   <a href="#comparison">Comparison Table</a>
   <a href="#visualizations">Visualizations</a>
   <a href="#consistency">Rank Consistency</a>
@@ -350,6 +398,49 @@
 <!-- Key Insights -->
 <h2 id="key-insights">Key Insights</h2>
 <div class="insight-grid" id="insights"></div>
+
+<!-- Known Limitations -->
+<h2 id="limitations">Known Limitations & Open Questions</h2>
+<p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.75rem">This benchmark is a preliminary signal, not a settled result. If SFOM can't survive honest scrutiny, it doesn't deserve the top spot.</p>
+
+<div class="accordion" id="limitationsAccordion">
+  <div class="accordion-item">
+    <button class="accordion-header">Authorship asymmetry</button>
+    <div class="accordion-body"><div class="accordion-content">
+      I wrote SFOM from scratch; the other 14 were outlined by me and expanded by LLMs. A purpose-built entry will naturally read more coherently than an LLM summary of someone else's life work. I used LLMs over domain experts for speed and cost; funding would fix this by commissioning experts to write or vet each tradition's entry.
+    </div></div>
+  </div>
+  <div class="accordion-item">
+    <button class="accordion-header">Criteria selection bias</button>
+    <div class="accordion-body"><div class="accordion-content">
+      The 31 criteria were mostly LLM-generated but I curated the final set, which could unconsciously favor the kind of theory I built. The scoring is also purely qualitative; I plan to develop quantitative measures or add them alongside the current criteria.
+    </div></div>
+  </div>
+  <div class="accordion-item">
+    <button class="accordion-header">SFOM entry is a snapshot</button>
+    <div class="accordion-body"><div class="accordion-content">
+      The benchmarked entry is a small summary of my theory as of early 2025; the core ideas remain but have been refined and formalized dramatically since. The benchmark is testing a compressed, year-old version — and it's still winning.
+    </div></div>
+  </div>
+  <div class="accordion-item">
+    <button class="accordion-header">LLM structural bias</button>
+    <div class="accordion-body"><div class="accordion-content">
+      LLMs tend to reward well-structured, comprehensive-sounding documents over deeper but less neatly packaged ones; the benchmark may partly measure document quality rather than theory quality.
+    </div></div>
+  </div>
+  <div class="accordion-item">
+    <button class="accordion-header">Small sample size</button>
+    <div class="accordion-body"><div class="accordion-content">
+      Three runs — two on Grok 3, one on Claude Opus 4.6 — is thin. More models, multiple runs, temperature/prompt variation, and entry-order randomization are planned.
+    </div></div>
+  </div>
+  <div class="accordion-item">
+    <button class="accordion-header">What would change my mind</button>
+    <div class="accordion-body"><div class="accordion-content">
+      An expert-rewritten competing entry overtaking SFOM; independently selected criteria producing different rankings; 10+ models showing the lead is within noise; or someone identifying a structural feature that mechanically advantages SFOM. If you find any of these, I want to hear about it.
+    </div></div>
+  </div>
+</div>
 
 <!-- Main Comparison Table -->
 <h2 id="comparison">Full Cross-Model Comparison</h2>
@@ -605,6 +696,14 @@
 </div><!-- /container -->
 
 <script>
+// ── ACCORDION ──
+document.querySelectorAll('.accordion-header').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    item.classList.toggle('open');
+  });
+});
+
 // ── FILE TABS ──
 document.querySelectorAll('.file-tab').forEach(tab => {
   tab.addEventListener('click', () => {
