@@ -474,7 +474,7 @@
   <div class="file-desc">
     <strong>Type:</strong> Input &mdash; Evaluation criteria<br>
     <strong>Role:</strong> Defines the 31 criteria each theory is scored against, covering internal consistency, practical applicability, explanatory power, and philosophical robustness. Also contains the evaluation prompt at the bottom.<br>
-    <strong>Key detail:</strong> Written and revised by me (suntzugi). Criteria are theory-agnostic — they don't favor any particular moral framework.
+    <strong>Key detail:</strong> The 31 criteria were mostly invented and fleshed out by LLMs, with some curation on my part, in order to reduce my own bias when choosing criteria. Criteria are theory-agnostic — they don't favor any particular moral framework.
   </div>
 </div>
 
@@ -573,7 +573,7 @@
 </div>
 
 <!-- Reproduce / Try It Yourself -->
-<h2 id="reproduce">Reproduce These Results</h2>
+<h2 id="reproduce">Reproduce / Corroborate / Test the Results</h2>
 <div class="insight" style="margin-bottom:1rem">
   <div class="body">
     <strong>How to run it yourself:</strong><br>
@@ -779,7 +779,7 @@ const gapToG3N2 = sfom.g3n - sorted.filter(d => !d.sfom).sort((a, b) => b.g3n - 
 const avgRankSD = mean(consistency.map(d => d.rankSD));
 
 const insightData = [
-  { title: "SFOM is consistently #1 — and its lead widens", body: `Ranked first in all 3 evaluations across 2 different LLMs over a 13-month span. No other theory achieves this. Submitted anonymously — the models had no reason to favor it. Gap to #2: Grok Normal +${gapToG3N2}, Grok Steelman +${sfom.g3s - sorted.filter(d=>!d.sfom).sort((a,b)=>b.g3s-a.g3s)[0].g3s}, Claude +${gapToClaude2}. The harder the evaluation, the more SFOM pulls ahead.` },
+  { title: "SFOM is consistently #1 — and its lead widens", body: `Ranked first in all 3 evaluations across 2 different LLMs over a 13-month span. No other theory achieves this. Submitted anonymously — the models had no sycophantic reason to favor it. Gap to #2: Grok Normal +${gapToG3N2}, Grok Steelman +${sfom.g3s - sorted.filter(d=>!d.sfom).sort((a,b)=>b.g3s-a.g3s)[0].g3s}, Claude +${gapToClaude2}. The harder the evaluation, the more SFOM pulls ahead.` },
   { title: "More capable LLMs are harsher graders", body: `Average score across all theories: Grok Normal ${mean(allG3N).toFixed(1)}, Grok Steelman ${mean(allG3S).toFixed(1)}, Claude ${mean(allClaude).toFixed(1)}. The average theory rating drops significantly under Opus 4.6, which makes sense given it's a more capable model applying stricter scrutiny — and yet SFOM's score stays at 27, unchanged from the steelman run. This shows robustness and genuine signal even in this rough pass: weaker theories get punished harder by a smarter evaluator, but SFOM holds.` },
 ];
 
