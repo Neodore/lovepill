@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moral Theory Benchmark — Cross-Model Comparison (2025–2026)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #f0c000;
+    --accent-dim: #f0c00030;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #d29922;
+    --latest-bg: #f0c00008;
+    --latest-border: #f0c00040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { color: var(--accent); }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .topbar-links a {
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s;
+  }
+  .topbar-links svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+  /* Index nav */
+  .index-nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .index-nav a {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .index-nav a:hover { border-color: var(--accent); color: var(--accent); }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    color: var(--accent);
+  }
+  h1 span { color: var(--text-muted); font-weight: 400; font-size: 1rem; }
+  .subtitle { color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.95rem; }
+  .byline { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.85rem; }
+  h2 {
+    font-size: 1.3rem;
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 1.05rem; margin: 1.5rem 0 0.75rem; color: var(--text-muted); }
+
+  /* Summary cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+  .card .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .card .value { font-size: 2rem; font-weight: 700; margin: 0.25rem 0; }
+  .card .detail { font-size: 0.85rem; color: var(--text-muted); }
+  .card.highlight { border-color: var(--accent); background: var(--accent-dim); }
+  .card.highlight .value { color: var(--accent); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.6rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { font-variant-numeric: tabular-nums; }
+  tr.sfom { background: var(--accent-dim); }
+  tr.sfom td { font-weight: 600; }
+  .rank-change { display: inline-block; min-width: 2.5rem; text-align: center; font-weight: 600; font-size: 0.85rem; }
+  .rank-up { color: var(--green); }
+  .rank-down { color: var(--red); }
+  .rank-same { color: var(--text-muted); }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-gold { background: var(--accent); color: #000; }
+  .badge-silver { background: #8b949e; color: #000; }
+  .badge-bronze { background: #a0522d; color: #fff; }
+
+  /* Latest column highlight */
+  .col-latest {
+    background: var(--latest-bg);
+    border-left: 2px solid var(--latest-border);
+    border-right: 2px solid var(--latest-border);
+  }
+  th.col-latest {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-left: 2px solid var(--latest-border);
+    border-right: 2px solid var(--latest-border);
+  }
+  tr.sfom td.col-latest { background: #f0c00018; }
+  .date-pill {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .date-pill-old { background: #30363d; color: #8b949e; }
+  .date-pill-latest { background: var(--accent); color: #000; }
+
+  /* Charts */
+  .chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 800px) { .chart-row { grid-template-columns: 1fr; } }
+  canvas { max-width: 100%; }
+
+  /* Insights */
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .insight-grid { grid-template-columns: 1fr; } }
+  .insight {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+  .insight .title { font-weight: 600; margin-bottom: 0.35rem; font-size: 0.95rem; }
+  .insight .body { font-size: 0.85rem; color: var(--text-muted); }
+
+  /* Consistency table */
+  .consistency-table td:nth-child(n+2) { text-align: center; }
+  .consistency-table th:nth-child(n+2) { text-align: center; }
+  .stability-bar {
+    display: inline-block;
+    height: 6px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-left: 0.4rem;
+    min-width: 4px;
+  }
+  .z-pos { color: var(--green); }
+  .z-neg { color: var(--red); }
+  .z-neutral { color: var(--text-muted); }
+
+  /* File viewer tabs */
+  .file-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
+  .file-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .file-tab:hover { color: var(--text); background: var(--surface); }
+  .file-tab.active {
+    color: var(--accent);
+    background: var(--surface);
+    border-color: var(--border);
+    border-bottom: 2px solid var(--surface);
+    margin-bottom: -2px;
+  }
+  .file-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 1.25rem;
+  }
+  .file-panel.active { display: block; }
+  .file-panel .file-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .file-panel .file-meta .name { font-weight: 600; font-size: 0.9rem; }
+  .file-panel .file-meta .gh-link {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.15s;
+  }
+  .file-panel .file-meta .gh-link:hover { border-color: var(--accent); }
+  .file-panel .file-meta .gh-link svg { width: 14px; height: 14px; fill: currentColor; }
+  .file-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+  .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Top bar with links -->
+<div class="topbar">
+  <div class="topbar-links">
+    <a href="https://suntzugi.com" target="_blank">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></g></svg>
+      suntzugi.com
+    </a>
+    <a href="https://github.com/suntzugi" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+    <a href="https://github.com/SunTzoogway/lovepill" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1h-8a1 1 0 00-1 1v6.708A2.486 2.486 0 014.5 9h8V1.5zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
+      Lovepill Repo
+    </a>
+  </div>
+</div>
+
+<h1>Moral Theory Benchmark <span>Cross-Model Comparison</span></h1>
+<p class="subtitle">SFOM v1 assessed against 14 competing moral theories across 3 independent LLM evaluations (2025–2026)</p>
+<p class="byline">SFOM (Subjective-Frame Objective Morality) is my theory. &mdash; <a href="https://suntzugi.com">suntzugi</a></p>
+
+<!-- Index Navigation -->
+<nav class="index-nav">
+  <a href="#methodology">Methodology</a>
+  <a href="#key-insights">Key Insights</a>
+  <a href="#comparison">Comparison Table</a>
+  <a href="#visualizations">Visualizations</a>
+  <a href="#consistency">Rank Consistency</a>
+  <a href="#movement">Ranking Movement</a>
+  <a href="#source-files">Source Files</a>
+  <a href="#reproduce">Reproduce</a>
+</nav>
+
+<!-- Summary Cards -->
+<div class="cards">
+  <div class="card highlight">
+    <div class="label">SFOM Rank</div>
+    <div class="value">#1</div>
+    <div class="detail">Across all 3 evaluations</div>
+  </div>
+  <div class="card">
+    <div class="label">Models Tested</div>
+    <div class="value">2</div>
+    <div class="detail">Grok 3 (2025) &middot; Claude Opus 4.6 (2026)</div>
+  </div>
+  <div class="card">
+    <div class="label">SFOM Best Score</div>
+    <div class="value">27/31</div>
+    <div class="detail">87% — achieved twice</div>
+  </div>
+  <div class="card">
+    <div class="label">Lead Over #2</div>
+    <div class="value">+3 to +5</div>
+    <div class="detail">Consistent gap across all runs</div>
+  </div>
+  <div class="card">
+    <div class="label">SFOM Stability</div>
+    <div class="value" id="sfomStabilityCard">—</div>
+    <div class="detail">Rank std dev (0 = perfect)</div>
+  </div>
+</div>
+
+<!-- Methodology (moved up) -->
+<h2 id="methodology">Methodology</h2>
+<div class="insight" style="margin-bottom:1rem">
+  <div class="body">
+    <strong>How the benchmark works:</strong> Two files are uploaded to an LLM — (1) an assessment framework defining 31 evaluation criteria, and (2) a catalogue of 15 moral theories written in comparable depth. The LLM is prompted to evaluate every theory against every criterion and produce a scored ranking. The process is then repeated with different models to test for consistency.<br><br>
+
+    <strong>Anonymization:</strong> SFOM was submitted without any author name or attribution attached — as can be verified by inspecting the
+    <a href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/Moral%20Theory%20Catalogue/moral-theories-norm-v1.txt" target="_blank">theory catalogue files</a>
+    directly. It appears as just another numbered theory ("Subjective-Frame Objective Morality Model") alongside the other 14. This eliminates the sycophancy factor — the model has no reason to favor it over any other entry.<br><br>
+
+    <strong>Why this matters (and its limits):</strong> LLM-based evaluation is an imperfect but useful signal. These models can't "do philosophy" the way a domain expert can — they can't truly judge originality or depth of argument. But they <em>can</em> assess structural properties: internal consistency, scope of applicability, how well a theory addresses known edge cases, compatibility with empirical findings. When the same theory wins across different models (Grok 3, Claude Opus 4.6), different conditions (normal, steelmanned), and different time periods (2025, 2026) — all without the theory being updated — that's a meaningful signal, even if it's not a substitute for peer review.<br><br>
+
+    <strong>Three evaluation runs:</strong><br>
+    <strong>Grok 3 Normal (Feb 2025):</strong> Base theory summaries assessed by Grok 3.<br>
+    <strong>Grok 3 Steelman (Feb 2025):</strong> LLM-steelmanned versions of each theory (except SKL, used as control — its text stayed identical).<br>
+    <strong>Claude Opus 4.6 (Mar 2026):</strong> Same v1 files, one year later, different model with Extended Thinking enabled. No theory updates.<br><br>
+
+    All theories were assessed on equal footing using the same v1 benchmark framework.
+    SFOM received no special treatment — it competed under the same rules as all 14 other theories.<br><br>
+    <strong>Important context:</strong> The SFOM entry in the benchmark is only a condensed summary of my full moral theory, last updated in this system in Feb 2025. The actual theory is significantly more detailed and has improved dramatically since then. I plan to input more comprehensive versions of SFOM and the competing theories, improve the assessment framework, expand the criteria, add more LLMs, and ultimately automate the entire pipeline so anyone can reproduce and extend these results. Even in its current state — a year-old summary competing against 14 other theories — SFOM still wins consistently.
+  </div>
+</div>
+
+<!-- Key Insights -->
+<h2 id="key-insights">Key Insights</h2>
+<div class="insight-grid" id="insights"></div>
+
+<!-- Main Comparison Table -->
+<h2 id="comparison">Full Cross-Model Comparison</h2>
+<div style="overflow-x:auto">
+<table id="compTable">
+  <thead>
+    <tr>
+      <th>Theory</th>
+      <th>Grok 3 Normal <span class="date-pill date-pill-old">Feb 2025</span></th>
+      <th>Grok 3 Steelman <span class="date-pill date-pill-old">Feb 2025</span></th>
+      <th class="col-latest">Claude Opus 4.6 <span class="date-pill date-pill-latest">Mar 2026</span></th>
+      <th>Avg</th>
+      <th>Rank Δ<br><span style="font-weight:400;text-transform:none">Grok→Claude</span></th>
+      <th>Score Δ<br><span style="font-weight:400;text-transform:none">Grok Norm→Claude</span></th>
+    </tr>
+  </thead>
+  <tbody id="mainTable"></tbody>
+</table>
+</div>
+
+<!-- Charts -->
+<h2 id="visualizations">Visualizations</h2>
+
+<div class="chart-container">
+  <canvas id="barChart" height="100"></canvas>
+</div>
+
+<div class="chart-row">
+  <div class="chart-container">
+    <canvas id="radarChart"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="deltaChart" height="120"></canvas>
+  </div>
+</div>
+
+<div class="chart-container">
+  <canvas id="bumpChart" height="90"></canvas>
+</div>
+
+<!-- Rank Consistency -->
+<h2 id="consistency">Rank &amp; Score Consistency</h2>
+<p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.5rem">
+  <strong>Rank Std Dev</strong> measures how much a theory's rank fluctuates across the 3 evaluations (0 = perfectly stable).
+  <strong>Score Std Dev</strong> measures raw score volatility.
+  <strong>Scrutiny Δ</strong> shows the score change from the weakest evaluator (Grok Normal) to the strongest (Claude Opus 4.6) — positive means the theory holds up or improves under smarter scrutiny, negative means it crumbles.
+  <strong>Z-score</strong> shows how far each theory's score is from that model's average — positive = above average for that model, negative = below.
+</p>
+
+<div style="overflow-x:auto">
+<table class="consistency-table">
+  <thead>
+    <tr>
+      <th>Theory</th>
+      <th>Rank Std Dev</th>
+      <th>Score Std Dev</th>
+      <th>Scrutiny Δ</th>
+      <th>Stability</th>
+      <th>Z (Grok Norm)</th>
+      <th>Z (Grok Steel)</th>
+      <th>Z (Claude)</th>
+    </tr>
+  </thead>
+  <tbody id="consistencyTable"></tbody>
+</table>
+</div>
+
+<div class="chart-row" style="margin-top:1.5rem">
+  <div class="chart-container">
+    <canvas id="stabilityChart"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="scrutinyChart"></canvas>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-container">
+    <canvas id="scoreStdChart"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="zScoreChart"></canvas>
+  </div>
+</div>
+
+<!-- Ranking Movement -->
+<h2 id="movement">Ranking Movement: Grok 3 Normal → Claude Opus 4.6</h2>
+
+<div class="insight-grid">
+  <div class="insight">
+    <div class="title rank-up">Biggest Climbers</div>
+    <div class="body" id="climbers"></div>
+  </div>
+  <div class="insight">
+    <div class="title rank-down">Biggest Fallers</div>
+    <div class="body" id="fallers"></div>
+  </div>
+</div>
+
+<!-- Source Files (tabbed viewer) -->
+<h2 id="source-files">Source Files</h2>
+<p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.25rem">All input and output files used in the benchmark. Click each tab to see details, or open directly on GitHub to inspect.</p>
+
+<div class="file-tabs" id="fileTabs">
+  <button class="file-tab active" data-tab="tab-framework">Assessment Framework</button>
+  <button class="file-tab" data-tab="tab-theories-norm">Theory Catalogue (Normal)</button>
+  <button class="file-tab" data-tab="tab-theories-steel">Theory Catalogue (Steelman)</button>
+  <button class="file-tab" data-tab="tab-grok-normal">Grok 3 Normal Results</button>
+  <button class="file-tab" data-tab="tab-grok-steel">Grok 3 Steelman Results</button>
+  <button class="file-tab" data-tab="tab-claude-html">Claude Test Export</button>
+  <button class="file-tab" data-tab="tab-claude-docx">Claude Assessment</button>
+</div>
+
+<div class="file-panel active" id="tab-framework">
+  <div class="file-meta">
+    <span class="name">moral-theory-assessment-framework-v.1.md</span>
+    <a class="gh-link" href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/moral-theory-assessment-framework-v.1.md" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+  <div class="file-desc">
+    <strong>Type:</strong> Input &mdash; Evaluation criteria<br>
+    <strong>Role:</strong> Defines the 31 criteria each theory is scored against, covering internal consistency, practical applicability, explanatory power, and philosophical robustness. Also contains the evaluation prompt at the bottom.<br>
+    <strong>Key detail:</strong> Written and revised by me (suntzugi). Criteria are theory-agnostic — they don't favor any particular moral framework.
+  </div>
+</div>
+
+<div class="file-panel" id="tab-theories-norm">
+  <div class="file-meta">
+    <span class="name">moral-theories-norm-v1.txt</span>
+    <a class="gh-link" href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/Moral%20Theory%20Catalogue/moral-theories-norm-v1.txt" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+  <div class="file-desc">
+    <strong>Type:</strong> Input &mdash; Theory descriptions (base version)<br>
+    <strong>Role:</strong> Contains all 15 moral theories written in comparable depth and format. SFOM appears as theory #9 with no author attribution — fully anonymized. LLMs fleshed out the outlines of the 14 established theories to reduce my personal bias in how they were described.<br>
+    <strong>Key detail:</strong> SFOM is the only theory I wrote from scratch. The others were outlined by me and expanded by LLMs for neutral wording.
+  </div>
+</div>
+
+<div class="file-panel" id="tab-theories-steel">
+  <div class="file-meta">
+    <span class="name">moral-theories-steelman-v1.txt</span>
+    <a class="gh-link" href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/Moral%20Theory%20Catalogue/moral-theories-steelman-v1.txt" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+  <div class="file-desc">
+    <strong>Type:</strong> Input &mdash; Theory descriptions (steelmanned version)<br>
+    <strong>Role:</strong> Same 15 theories, but each one (except SKL) was steelmanned by an LLM to present the strongest possible version of each argument. SKL was kept identical as a control to see if the steelman boost affected relative rankings.<br>
+    <strong>Key detail:</strong> All theories including SFOM were steelmanned — giving competitors every advantage. SFOM still ranked #1.
+  </div>
+</div>
+
+<div class="file-panel" id="tab-grok-normal">
+  <div class="file-meta">
+    <span class="name">grok-3-normal-test_19:02:25.jpg</span>
+    <a class="gh-link" href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/grok-3-normal-test_19%3A02%3A25.jpg" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+  <div class="file-desc">
+    <strong>Type:</strong> Output &mdash; Screenshot evidence<br>
+    <strong>Date:</strong> <span class="date-pill date-pill-old">Feb 19, 2025</span><br>
+    <strong>Model:</strong> Grok 3 (base theory versions)<br>
+    <strong>Result:</strong> SFOM ranked #1 with 25/31
+  </div>
+</div>
+
+<div class="file-panel" id="tab-grok-steel">
+  <div class="file-meta">
+    <span class="name">grok3-steelman-test_19:02:25.jpg</span>
+    <a class="gh-link" href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/grok3-steelman-test_19%3A02%3A25.jpg" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+  <div class="file-desc">
+    <strong>Type:</strong> Output &mdash; Screenshot evidence<br>
+    <strong>Date:</strong> <span class="date-pill date-pill-old">Feb 19, 2025</span><br>
+    <strong>Model:</strong> Grok 3 (steelmanned theory versions)<br>
+    <strong>Result:</strong> SFOM ranked #1 with 27/31
+  </div>
+</div>
+
+<div class="file-panel" id="tab-claude-html">
+  <div class="file-meta">
+    <span class="name">claude-opus-extended-thinking-test_2026-03-06.html</span>
+    <a class="gh-link" href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/claude-opus-extended-thinking-test_2026-03-06.html" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+  <div class="file-desc">
+    <strong>Type:</strong> Output &mdash; Full conversation export<br>
+    <strong>Date:</strong> <span class="date-pill date-pill-latest">Mar 6, 2026</span><br>
+    <strong>Model:</strong> Claude Opus 4.6 with Extended Thinking<br>
+    <strong>Result:</strong> SFOM ranked #1 with 27/31. Full conversation showing the model's reasoning process.
+  </div>
+</div>
+
+<div class="file-panel" id="tab-claude-docx">
+  <div class="file-meta">
+    <span class="name">claude-opus-extended-thinking-assessment_2026-03-06.docx</span>
+    <a class="gh-link" href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/claude-opus-extended-thinking-assessment_2026-03-06.docx" target="_blank">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+  <div class="file-desc">
+    <strong>Type:</strong> Output &mdash; Complete assessment document<br>
+    <strong>Date:</strong> <span class="date-pill date-pill-latest">Mar 6, 2026</span><br>
+    <strong>Model:</strong> Claude Opus 4.6 with Extended Thinking<br>
+    <strong>Result:</strong> All 15 theories scored, with detailed failure analysis for each theory and stress-tests of the top 3.
+  </div>
+</div>
+
+<!-- Reproduce / Try It Yourself -->
+<h2 id="reproduce">Reproduce These Results</h2>
+<div class="insight" style="margin-bottom:1rem">
+  <div class="body">
+    <strong>How to run it yourself:</strong><br>
+    <ol style="margin:0.5rem 0 0.75rem 1.25rem;color:var(--text-muted)">
+      <li>Download the two input files from this repo:
+        <a href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/moral-theory-assessment-framework-v.1.md" target="_blank">Assessment Framework</a> and
+        <a href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/Moral%20Theory%20Catalogue/moral-theories-norm-v1.txt" target="_blank">Theory Catalogue</a>
+        (or the <a href="https://github.com/SunTzoogway/lovepill/blob/main/Moral%20Benchmark/Moral%20Theory%20Catalogue/moral-theories-steelman-v1.txt" target="_blank">steelmanned version</a>).
+      </li>
+      <li>Open any capable LLM (Claude, Grok, GPT, Gemini, DeepSeek, etc.).</li>
+      <li>Upload both files and prompt: <em>"Answer the question in the theory list document using the framework in the framework document, in detail."</em> (The full prompt is at the bottom of both files.)</li>
+      <li>The model will evaluate all 15 theories against the 31 criteria and produce a scored ranking.</li>
+    </ol>
+
+    <strong>Expect some variation:</strong> LLM outputs are non-deterministic, so your exact scores will differ slightly from run to run. These results are all first-pass, single-run evaluations on my end. In the near term, I plan to run each model multiple times and in different configurations (temperature, prompting style, order randomization) to minimize variation and bias and produce averaged results with confidence intervals.<br><br>
+
+    <strong>Add your own theory:</strong> You can add any moral theory that's missing — or your own — to the theory catalogue file, then run it through the same framework. The system is designed to be open: just add a new numbered entry in the same format as the existing 15 and re-run. Others have tried this during the 2025 hackathon and no submitted theory managed to beat SFOM.<br><br>
+
+    <strong>Challenge it:</strong> If you think a theory should score higher, or that the framework criteria are biased, I want to hear about it. The whole point of making this open is to invite scrutiny. If SFOM can't survive challenge, it doesn't deserve the top spot.
+  </div>
+</div>
+
+<div class="footer">
+  SFOM Moral Theory Benchmark &middot; Data from Grok 3 (Feb 2025) and Claude Opus 4.6 Extended Thinking (Mar 2026) &middot; Generated 2026-03-11
+  &middot; <a href="https://suntzugi.com">suntzugi.com</a>
+  &middot; <a href="https://github.com/suntzugi">GitHub</a>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ── FILE TABS ──
+document.querySelectorAll('.file-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.file-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── DATA ──
+const DATA = [
+  { theory: "SFOM",                  g3n: 25, g3s: 27, claude: 27, sfom: true },
+  { theory: "Moral Naturalism",      g3n: 22, g3s: 24, claude: 16 },
+  { theory: "Constructivism",        g3n: 21, g3s: 23, claude: 22 },
+  { theory: "Contractualism",        g3n: 20, g3s: 22, claude: 17 },
+  { theory: "Ideal Observer Theory", g3n: 19, g3s: 21, claude: 16 },
+  { theory: "SKL",                   g3n: 19, g3s: 21, claude: 21 },
+  { theory: "Deontological Ethics",  g3n: 18, g3s: 20, claude: 18 },
+  { theory: "Consequentialism",      g3n: 18, g3s: 20, claude: 16 },
+  { theory: "Virtue Ethics",         g3n: 17, g3s: 19, claude: 16 },
+  { theory: "Evolutionary Ethics",   g3n: 17, g3s: 19, claude: 12 },
+  { theory: "Moral Realism",         g3n: 16, g3s: 20, claude: 12 },
+  { theory: "Moral Anti-Realism",    g3n: 14, g3s: 17, claude: 8 },
+  { theory: "Expressivism",          g3n: 13, g3s: 15, claude: 7 },
+  { theory: "Moral Relativism",      g3n: 11, g3s: 14, claude: 5 },
+  { theory: "Divine Command Theory", g3n: 10, g3s: 12, claude: 6 },
+];
+
+// ── STATS HELPERS ──
+function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+function stdDev(arr) {
+  const m = mean(arr);
+  return Math.sqrt(arr.reduce((s, v) => s + (v - m) ** 2, 0) / arr.length);
+}
+function zScore(val, arr) {
+  const m = mean(arr);
+  const sd = stdDev(arr);
+  return sd === 0 ? 0 : (val - m) / sd;
+}
+
+// Compute ranks
+function computeRanks(key) {
+  const sorted = [...DATA].sort((a, b) => b[key] - a[key]);
+  const ranks = {};
+  let rank = 1;
+  for (let i = 0; i < sorted.length; i++) {
+    if (i > 0 && sorted[i][key] < sorted[i - 1][key]) rank = i + 1;
+    ranks[sorted[i].theory] = rank;
+  }
+  return ranks;
+}
+
+const ranksG3N = computeRanks('g3n');
+const ranksG3S = computeRanks('g3s');
+const ranksClaude = computeRanks('claude');
+
+// Model-wide stats for z-scores
+const allG3N = DATA.map(d => d.g3n);
+const allG3S = DATA.map(d => d.g3s);
+const allClaude = DATA.map(d => d.claude);
+
+// Per-theory consistency
+const consistency = DATA.map(d => {
+  const ranks = [ranksG3N[d.theory], ranksG3S[d.theory], ranksClaude[d.theory]];
+  const scores = [d.g3n, d.g3s, d.claude];
+  const rankSD = stdDev(ranks);
+  const scoreSD = stdDev(scores);
+  const scrutinyDelta = d.claude - d.g3n; // score change from weakest to strongest evaluator
+  const zG3N = zScore(d.g3n, allG3N);
+  const zG3S = zScore(d.g3s, allG3S);
+  const zClaude = zScore(d.claude, allClaude);
+  return { ...d, ranks, scores, rankSD, scoreSD, scrutinyDelta, zG3N, zG3S, zClaude };
+});
+
+// Sort by average for table
+const sorted = [...DATA].sort((a, b) => {
+  const avgA = (a.g3n + a.g3s + a.claude) / 3;
+  const avgB = (b.g3n + b.g3s + b.claude) / 3;
+  return avgB - avgA;
+});
+
+// ── SFOM STABILITY CARD ──
+const sfomCons = consistency.find(d => d.sfom);
+document.getElementById('sfomStabilityCard').textContent = sfomCons.rankSD.toFixed(2);
+
+// ── MAIN TABLE ──
+const tbody = document.getElementById('mainTable');
+sorted.forEach(d => {
+  const avg = ((d.g3n + d.g3s + d.claude) / 3).toFixed(1);
+  const rankDelta = ranksG3N[d.theory] - ranksClaude[d.theory];
+  const scoreDelta = d.claude - d.g3n;
+  const rankClass = rankDelta > 0 ? 'rank-up' : rankDelta < 0 ? 'rank-down' : 'rank-same';
+  const rankSymbol = rankDelta > 0 ? `▲${rankDelta}` : rankDelta < 0 ? `▼${Math.abs(rankDelta)}` : '—';
+  const scoreClass = scoreDelta > 0 ? 'rank-up' : scoreDelta < 0 ? 'rank-down' : 'rank-same';
+  const scoreSymbol = scoreDelta > 0 ? `+${scoreDelta}` : scoreDelta === 0 ? '0' : `${scoreDelta}`;
+
+  const badge = ranksClaude[d.theory] === 1 ? '<span class="badge badge-gold">1st</span> ' :
+                ranksClaude[d.theory] === 2 ? '<span class="badge badge-silver">2nd</span> ' :
+                ranksClaude[d.theory] === 3 ? '<span class="badge badge-bronze">3rd</span> ' : '';
+
+  const theoryLabel = d.sfom ? `${d.theory} <span style="font-weight:400;font-size:0.8rem;color:var(--text-muted)">(my theory)</span>` : d.theory;
+
+  tbody.innerHTML += `
+    <tr class="${d.sfom ? 'sfom' : ''}">
+      <td>${badge}${theoryLabel}</td>
+      <td>${d.g3n}/31</td>
+      <td>${d.g3s}/31</td>
+      <td class="col-latest">${d.claude}/31</td>
+      <td>${avg}</td>
+      <td><span class="rank-change ${rankClass}">${rankSymbol}</span></td>
+      <td><span class="rank-change ${scoreClass}">${scoreSymbol}</span></td>
+    </tr>`;
+});
+
+// ── CONSISTENCY TABLE ──
+const consTbody = document.getElementById('consistencyTable');
+const sortedCons = [...consistency].sort((a, b) => a.rankSD - b.rankSD);
+const maxSD = Math.max(...sortedCons.map(d => d.rankSD));
+
+function zCell(z) {
+  const cls = z > 0.3 ? 'z-pos' : z < -0.3 ? 'z-neg' : 'z-neutral';
+  const symbol = z > 0 ? '+' : '';
+  return `<span class="${cls}">${symbol}${z.toFixed(2)}</span>`;
+}
+
+sortedCons.forEach(d => {
+  const barWidth = maxSD > 0 ? Math.max(4, (1 - d.rankSD / maxSD) * 80) : 80;
+  const barColor = d.rankSD < 0.5 ? 'var(--green)' : d.rankSD < 1.5 ? 'var(--orange)' : 'var(--red)';
+  const stabilityLabel = d.rankSD === 0 ? 'Perfect' : d.rankSD < 0.5 ? 'Very High' : d.rankSD < 1.0 ? 'High' : d.rankSD < 2.0 ? 'Moderate' : 'Low';
+
+  const scrClass = d.scrutinyDelta > 0 ? 'z-pos' : d.scrutinyDelta < 0 ? 'z-neg' : 'z-neutral';
+  const scrSymbol = d.scrutinyDelta > 0 ? `+${d.scrutinyDelta}` : d.scrutinyDelta === 0 ? '0' : `${d.scrutinyDelta}`;
+
+  consTbody.innerHTML += `
+    <tr class="${d.sfom ? 'sfom' : ''}">
+      <td>${d.theory}</td>
+      <td>${d.rankSD.toFixed(2)}</td>
+      <td>${d.scoreSD.toFixed(1)}</td>
+      <td><span class="${scrClass}" style="font-weight:600">${scrSymbol}</span></td>
+      <td>${stabilityLabel} <span class="stability-bar" style="width:${barWidth}px;background:${barColor}"></span></td>
+      <td>${zCell(d.zG3N)}</td>
+      <td>${zCell(d.zG3S)}</td>
+      <td>${zCell(d.zClaude)}</td>
+    </tr>`;
+});
+
+// ── CLIMBERS / FALLERS ──
+const movements = DATA.map(d => ({
+  theory: d.theory,
+  delta: ranksG3N[d.theory] - ranksClaude[d.theory],
+  from: ranksG3N[d.theory],
+  to: ranksClaude[d.theory]
+})).sort((a, b) => b.delta - a.delta);
+
+document.getElementById('climbers').innerHTML = movements
+  .filter(m => m.delta > 0)
+  .map(m => `<strong>${m.theory}</strong>: #${m.from} → #${m.to} (▲${m.delta})`)
+  .join('<br>') || 'None';
+
+document.getElementById('fallers').innerHTML = movements
+  .filter(m => m.delta < 0)
+  .sort((a, b) => a.delta - b.delta)
+  .map(m => `<strong>${m.theory}</strong>: #${m.from} → #${m.to} (▼${Math.abs(m.delta)})`)
+  .join('<br>') || 'None';
+
+// ── INSIGHTS ──
+const insightsDiv = document.getElementById('insights');
+const sfom = DATA.find(d => d.sfom);
+const gapToClaude2 = sfom.claude - sorted.filter(d => !d.sfom)[0].claude;
+const gapToG3N2 = sfom.g3n - sorted.filter(d => !d.sfom).sort((a, b) => b.g3n - a.g3n)[0].g3n;
+const avgRankSD = mean(consistency.map(d => d.rankSD));
+
+const insightData = [
+  { title: "SFOM is consistently #1", body: `Ranked first in all 3 evaluations across 2 different LLMs over a 13-month span. No other theory achieves this. Submitted anonymously — the models had no reason to favor it.` },
+  { title: "Claude is a harsher grader", body: `Average score across all theories: Grok Normal ${mean(allG3N).toFixed(1)}, Grok Steelman ${mean(allG3S).toFixed(1)}, Claude ${mean(allClaude).toFixed(1)}. The average theory rating drops significantly under Opus 4.6, which makes sense given it's a more capable model applying stricter scrutiny — and yet SFOM's score stays at 27, unchanged from the steelman run. This shows robustness and genuine signal even in this rough pass: weaker theories get punished harder by a smarter evaluator, but SFOM holds.` },
+  { title: "SFOM's lead widens under scrutiny", body: `Gap to #2: Grok Normal +${gapToG3N2}, Grok Steelman +${sfom.g3s - sorted.filter(d=>!d.sfom).sort((a,b)=>b.g3s-a.g3s)[0].g3s}, Claude +${gapToClaude2}. The harder the evaluation, the more SFOM pulls ahead.` },
+  { title: "Bottom-tier theories collapse under Claude", body: `Moral Relativism dropped from 11 to 5, Divine Command Theory from 10 to 6, Expressivism from 13 to 7. Weaker theories fare far worse under stricter evaluation.` },
+  { title: "SKL holds strong across models", body: `SKL (control theory, unsteelmanned) scores 19→21→21. Consistent performance despite not receiving the steelman boost other theories got.` },
+  { title: `Average rank stability: ${avgRankSD.toFixed(2)} SD`, body: `Most theories maintain relatively stable rankings (avg SD ${avgRankSD.toFixed(2)}). SFOM has the lowest rank std dev at ${sfomCons.rankSD.toFixed(2)} — locked at #1. The most volatile theories are mid-tier ones where small score changes cause large rank shifts.` },
+];
+
+insightData.forEach(ins => {
+  insightsDiv.innerHTML += `<div class="insight"><div class="title">${ins.title}</div><div class="body">${ins.body}</div></div>`;
+});
+
+// ── CHARTS ──
+const chartColors = {
+  g3n: '#58a6ff',
+  g3s: '#79c0ff',
+  claude: '#f0c000',
+  sfomG3n: '#1a6fb5',
+  sfomG3s: '#2196F3',
+  sfomClaude: '#f0c000',
+};
+
+const chartSorted = [...DATA].sort((a, b) => ((a.g3n+a.g3s+a.claude)/3) - ((b.g3n+b.g3s+b.claude)/3));
+
+// 1. Grouped Bar Chart
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: chartSorted.map(d => d.theory),
+    datasets: [
+      {
+        label: 'Grok 3 Normal (Feb 2025)',
+        data: chartSorted.map(d => d.g3n),
+        backgroundColor: chartSorted.map(d => d.sfom ? chartColors.sfomG3n : chartColors.g3n),
+        borderRadius: 3,
+      },
+      {
+        label: 'Grok 3 Steelman (Feb 2025)',
+        data: chartSorted.map(d => d.g3s),
+        backgroundColor: chartSorted.map(d => d.sfom ? chartColors.sfomG3s : chartColors.g3s),
+        borderRadius: 3,
+      },
+      {
+        label: 'Claude Opus 4.6 (Mar 2026)',
+        data: chartSorted.map(d => d.claude),
+        backgroundColor: chartSorted.map(d => d.sfom ? '#ffd700' : '#e0e0e0'),
+        borderRadius: 3,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Moral Theory Benchmark: All Scores by Model', color: '#e6edf3', font: { size: 16, weight: 'bold' } },
+      legend: { labels: { color: '#8b949e' } },
+    },
+    scales: {
+      x: { ticks: { color: '#8b949e', maxRotation: 45 }, grid: { color: '#30363d' } },
+      y: { min: 0, max: 32, ticks: { color: '#8b949e' }, grid: { color: '#30363d' }, title: { display: true, text: 'Score /31', color: '#8b949e' } },
+    }
+  }
+});
+
+// 2. Radar Chart (top 5)
+const top5 = [...DATA].sort((a,b) => ((b.g3n+b.g3s+b.claude)/3) - ((a.g3n+a.g3s+a.claude)/3)).slice(0, 5);
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: top5.map(d => d.theory),
+    datasets: [
+      { label: 'Grok 3 Normal', data: top5.map(d => d.g3n), borderColor: chartColors.g3n, backgroundColor: chartColors.g3n + '20', pointBackgroundColor: chartColors.g3n },
+      { label: 'Grok 3 Steelman', data: top5.map(d => d.g3s), borderColor: chartColors.g3s, backgroundColor: chartColors.g3s + '20', pointBackgroundColor: chartColors.g3s },
+      { label: 'Claude Opus 4.6', data: top5.map(d => d.claude), borderColor: chartColors.claude, backgroundColor: chartColors.claude + '20', pointBackgroundColor: chartColors.claude },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Top 5 Theories — Radar', color: '#e6edf3', font: { size: 14, weight: 'bold' } },
+      legend: { labels: { color: '#8b949e' } },
+    },
+    scales: {
+      r: {
+        min: 10, max: 30,
+        ticks: { color: '#8b949e', backdropColor: 'transparent' },
+        grid: { color: '#30363d' },
+        angleLines: { color: '#30363d' },
+        pointLabels: { color: '#e6edf3', font: { size: 11 } },
+      }
+    }
+  }
+});
+
+// 3. Score Delta Chart
+const deltaSorted = [...DATA].sort((a, b) => (a.claude - a.g3n) - (b.claude - b.g3n));
+new Chart(document.getElementById('deltaChart'), {
+  type: 'bar',
+  data: {
+    labels: deltaSorted.map(d => d.theory),
+    datasets: [{
+      label: 'Score Change (Grok Normal → Claude)',
+      data: deltaSorted.map(d => d.claude - d.g3n),
+      backgroundColor: deltaSorted.map(d => {
+        const delta = d.claude - d.g3n;
+        if (d.sfom) return '#f0c000';
+        return delta >= 0 ? '#3fb950' : '#f85149';
+      }),
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Score Change: Grok 3 Normal → Claude Opus 4.6', color: '#e6edf3', font: { size: 14, weight: 'bold' } },
+      legend: { display: false },
+    },
+    scales: {
+      x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' }, title: { display: true, text: 'Score Δ', color: '#8b949e' } },
+      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { display: false } },
+    }
+  }
+});
+
+// 4. Bump Chart
+const rankData = DATA.map(d => ({
+  theory: d.theory,
+  sfom: d.sfom,
+  ranks: [ranksG3N[d.theory], ranksG3S[d.theory], ranksClaude[d.theory]]
+}));
+
+new Chart(document.getElementById('bumpChart'), {
+  type: 'line',
+  data: {
+    labels: ['Grok 3 Normal (Feb 2025)', 'Grok 3 Steelman (Feb 2025)', 'Claude Opus 4.6 (Mar 2026)'],
+    datasets: rankData.map(d => ({
+      label: d.theory,
+      data: d.ranks,
+      borderColor: d.sfom ? '#f0c000' : '#8b949e40',
+      backgroundColor: d.sfom ? '#f0c000' : 'transparent',
+      borderWidth: d.sfom ? 3 : 1.5,
+      pointRadius: d.sfom ? 6 : 3,
+      pointBackgroundColor: d.sfom ? '#f0c000' : '#8b949e',
+      tension: 0.3,
+      order: d.sfom ? 0 : 1,
+    }))
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Rank Trajectory Across Evaluations (lower = better)', color: '#e6edf3', font: { size: 16, weight: 'bold' } },
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.dataset.label}: Rank #${ctx.parsed.y}`
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#8b949e', font: { size: 13 } }, grid: { color: '#30363d' } },
+      y: { reverse: true, min: 1, max: 15, ticks: { color: '#8b949e', stepSize: 1 }, grid: { color: '#30363d22' }, title: { display: true, text: 'Rank', color: '#8b949e' } },
+    }
+  }
+});
+
+// 5. Stability Chart
+const stabSorted = [...consistency].sort((a, b) => a.rankSD - b.rankSD);
+new Chart(document.getElementById('stabilityChart'), {
+  type: 'bar',
+  data: {
+    labels: stabSorted.map(d => d.theory),
+    datasets: [{
+      label: 'Rank Std Dev',
+      data: stabSorted.map(d => d.rankSD),
+      backgroundColor: stabSorted.map(d => {
+        if (d.sfom) return '#f0c000';
+        if (d.rankSD < 0.5) return '#3fb950';
+        if (d.rankSD < 1.5) return '#d29922';
+        return '#f85149';
+      }),
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Rank Stability (lower = more consistent)', color: '#e6edf3', font: { size: 14, weight: 'bold' } },
+      legend: { display: false },
+    },
+    scales: {
+      x: { min: 0, ticks: { color: '#8b949e' }, grid: { color: '#30363d' }, title: { display: true, text: 'Rank Std Dev', color: '#8b949e' } },
+      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { display: false } },
+    }
+  }
+});
+
+// 6. Scrutiny Delta Chart (how theories fare under smarter evaluation)
+const scrSorted = [...consistency].sort((a, b) => a.scrutinyDelta - b.scrutinyDelta);
+new Chart(document.getElementById('scrutinyChart'), {
+  type: 'bar',
+  data: {
+    labels: scrSorted.map(d => d.theory),
+    datasets: [{
+      label: 'Score Change (Grok Normal → Claude)',
+      data: scrSorted.map(d => d.scrutinyDelta),
+      backgroundColor: scrSorted.map(d => {
+        if (d.sfom) return '#f0c000';
+        return d.scrutinyDelta >= 0 ? '#3fb950' : '#f85149';
+      }),
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Scrutiny Resilience (score change under smarter model)', color: '#e6edf3', font: { size: 14, weight: 'bold' } },
+      legend: { display: false },
+    },
+    scales: {
+      x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' }, title: { display: true, text: 'Score Δ (Grok Normal → Claude)', color: '#8b949e' } },
+      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { display: false } },
+    }
+  }
+});
+
+// 7. Score Std Dev Chart
+const scoreStdSorted = [...consistency].sort((a, b) => a.scoreSD - b.scoreSD);
+new Chart(document.getElementById('scoreStdChart'), {
+  type: 'bar',
+  data: {
+    labels: scoreStdSorted.map(d => d.theory),
+    datasets: [{
+      label: 'Score Std Dev',
+      data: scoreStdSorted.map(d => d.scoreSD),
+      backgroundColor: scoreStdSorted.map(d => {
+        if (d.sfom) return '#f0c000';
+        if (d.scoreSD < 1.5) return '#3fb950';
+        if (d.scoreSD < 3.0) return '#d29922';
+        return '#f85149';
+      }),
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Score Volatility (lower = more consistent raw score)', color: '#e6edf3', font: { size: 14, weight: 'bold' } },
+      legend: { display: false },
+    },
+    scales: {
+      x: { min: 0, ticks: { color: '#8b949e' }, grid: { color: '#30363d' }, title: { display: true, text: 'Score Std Dev', color: '#8b949e' } },
+      y: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { display: false } },
+    }
+  }
+});
+
+// 8. Z-Score Chart
+const zSorted = [...consistency].sort((a, b) => ((b.g3n+b.g3s+b.claude)/3) - ((a.g3n+a.g3s+a.claude)/3));
+new Chart(document.getElementById('zScoreChart'), {
+  type: 'bar',
+  data: {
+    labels: zSorted.map(d => d.theory),
+    datasets: [
+      {
+        label: 'Z (Grok Normal)',
+        data: zSorted.map(d => d.zG3N),
+        backgroundColor: '#58a6ff90',
+        borderRadius: 2,
+      },
+      {
+        label: 'Z (Grok Steelman)',
+        data: zSorted.map(d => d.zG3S),
+        backgroundColor: '#79c0ff90',
+        borderRadius: 2,
+      },
+      {
+        label: 'Z (Claude Opus)',
+        data: zSorted.map(d => d.zClaude),
+        backgroundColor: '#f0c00090',
+        borderRadius: 2,
+      },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Z-Scores: How Far From Each Model\'s Average', color: '#e6edf3', font: { size: 14, weight: 'bold' } },
+      legend: { labels: { color: '#8b949e' } },
+    },
+    scales: {
+      x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' }, title: { display: true, text: 'Z-score (σ from model mean)', color: '#8b949e' } },
+      y: { ticks: { color: '#8b949e', font: { size: 10 } }, grid: { display: false } },
+    }
+  }
+});
+</script>
+</body>
+</html>
